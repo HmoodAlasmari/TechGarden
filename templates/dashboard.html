@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+
+{% block head %}
+<title>Welcome to TechGarden 🌳</title>
+{% endblock %}
+
+
+{% block body %}
+<p><h5>Welcome {{current_user.name}}</h5></p>
+<button type="button" class="btn btn-primary float-right" data-toggle="modal" href="#AddModel">Add new garden</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="AddModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add new garden to your account</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="POST" action="">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="name">Garden ID</label>
+                <input class="form-control" id="id" name="id" required="" type="text" value="">
+              </div>
+              <div class="form-group">
+                <label for="password">Garden Password</label>
+                <input class="form-control" id="password" name="password" required="" type="password" value="">
+              </div>
+              <div class="form-group">
+                <label for="plant">Plant</label><br>
+                <input type="radio" aria-label="Radio button for following text input" checked>
+                <label class="form-check-label" for="exampleRadios1">
+                  Mint
+                </label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <input type="submit" class="btn btn-primary"></input>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+<div>
+  {% for garden in current_user.gardens %}
+    <div class="garden card border-dark m-20">
+      <div class="card-header">{{garden.name}}</div>
+      <div class="card-body text-dark">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm">
+              <img src="{{url_for('static', filename='/Pictures/temp.png')}}" width="30px"/> {{garden.lastRecoerd().temperature}}°
+              <br><small>Temperature</small>
+            </div>
+            <div class="col-sm">
+              <img src="{{url_for('static', filename='/Pictures/Water.png')}}" width="30px"/> {{garden.lastRecoerd().humidity}}%
+              <br><small>Humidity</small>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm">
+              <img src="{{url_for('static', filename='/Pictures/soil.png')}}" width="30px"/> {{garden.lastRecoerd().soil_moist}}%
+              <br><small>Soil Moist</small>
+            </div>
+            <div class="col-sm">
+              <img src="{{url_for('static', filename='/Pictures/water_level.png')}}" width="30px"/> {{garden.lastRecoerd().water_level}}%
+              <br><small>Water Level</small>
+            </div>
+          </div>
+        </div>
+        <br>
+        <small>Last Updata was : {{garden.lastRecoerd().timestamp.strftime('%b/%d %H:%M')}}</small>
+        <br>
+        <div class="card-footer bg-transparent border-dark">
+          <button type="button" class="btn btn-primary" data-toggle="modal" href="#model{{garden.id}}">Show More Details</button>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <button type="button" class="btn btn-danger"  data-toggle="modal" data-target="#Remove{{garden.id}}">Remove {{garden.name}}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade bd-example-modal-lg" id="model{{garden.id}}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title h4" id="myLargeModalLabel">{{garden.name}} Garden</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><b>This Garden was created in : </b>{{garden.timestamp.strftime('%Y/%b/%d %H:%M')}}</p>
+            <br>
+            <hr>
+
+
+            <div class="card m-20">
+              <div class="modal-header">
+                <h5 class="modal-title h4" id="myLargeModalLabel">Plant : </h5>
+              </div>
+              <img class="card-img-top" src="{{url_for('static', filename='/Pictures/Mint.jpg')}}" alt="{{garden.have.name}}">
+              <div class="card-body">
+                <p class="card-text"><p>You are useig <b>{{garden.have.name}}</b> plant were this plant can live in temperature between {{garden.have.Min_Temp}}° and {{garden.have.Max_Temp}}° </p></p>
+              </div>
+            </div>
+            
+
+            <hr>
+            <h4>Graph : </h4>
+            <small>This graph to show you Temperature, Humidity, Soil Moist and Water Level over time</small>
+            <br><br>
+            <embed type="image/svg+xml" src={{garden.lastFiveRecoerd()|safe}} style='max-width:1500px'/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <!-- Modal -->
+    <div class="modal fade" id="Remove{{garden.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">{{garden.name}} Garden</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to Remove {{garden.name}} Garden
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <a href="remove/{{garden.id}}" class="btn btn-danger">Remove {{garden.name}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+
+{% endblock %}

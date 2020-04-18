@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+
+{% block head %}
+<title>Welcome to TechGarden 🌳</title>
+{% endblock %}
+
+
+{% block body %}
+
+  <div class="garden card border-dark m-30">
+    <div class="card-header"><h4><li>User Profile</li></h4></div>
+    <div class="card" style="width: 25rem;">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><b>Name : </b> {{current_user.name}}</li>
+        <li class="list-group-item"><b>Email : </b> {{current_user.email}}</li>
+        <li class="list-group-item"><b>Phone : </b> {{current_user.phone}}</li>
+      </ul>
+    </div>
+  </div>
+
+{% endblock %}
